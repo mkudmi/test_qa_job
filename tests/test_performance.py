@@ -11,3 +11,17 @@ def test_get_items_performance():
     assert response.elapsed.total_seconds() < 1.0
     print("Response time: {} seconds".format(response.elapsed.total_seconds()))
 
+#Тест на проверку скорости POST запроса. Выводит кол-во секунд
+@pytest.mark.performance
+def test_post_item_performance():
+    payload = {
+        "id": "101",
+        "fname": "John",
+        "lname": "Doe",
+        "phone": "+1234567890",
+        "bday": "1980-01-01"
+    }
+    response = requests.post(BASE_URL, json=payload)
+    assert response.status_code == 200
+    assert response.elapsed.total_seconds() < 1.0
+    print("Response time: {} seconds".format(response.elapsed.total_seconds()))
