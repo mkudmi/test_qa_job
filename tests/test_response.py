@@ -29,7 +29,8 @@ def test_create_person():
         print("Status code: {}. SUCCESS".format(response.status_code))
     except AssertionError:
         print("Status code: {}. Must be 201".format(response.status_code))
-
+        
+#Тест на проверку создания персоны в книжке по новому id, при условии, что изначально в книжке их 3. Проверяет статус кода.
 def test_check_created_person():
     try:
         response = requests.get(f'{BASE_URL}?id={4}')
@@ -37,3 +38,29 @@ def test_check_created_person():
         print("Status code: {}. Person is created".format(response.status_code))
     except AssertionError:
         print("Status code: {}. Person is not created".format(response.status_code))
+
+#Тест на проверку PUT запроса. Проверяет статус кода, возвращает параметр succsess.
+def test_update_person():
+    payload = {
+        "id": 1,
+        "fname": "Jane",
+        "lname": "Doe",
+        "phone": "+9876543210",
+        "bday": "1995-05-05"
+    }
+    try:
+        response = requests.put(f'{BASE_URL}/', json=payload)
+        assert "success" in response.json()
+        assert response.status_code == 202
+        print("Status code: {}. SUCCESS".format(response.status_code))
+    except AssertionError:
+        print("Status code: {}. Must be 202".format(response.status_code))
+
+#Тест на проверку обновления данных по fname, при условии, что изначально fname = Tom
+def test_check_updated_person():
+    try:
+        response = requests.get(f'{BASE_URL}?id={1}&fname=Jane')
+        assert response.status_code == 200
+        print("Status code: {}. Person is updated".format(response.status_code))
+    except AssertionError:
+        print("Status code: {}. Person is not updated".format(response.status_code))
