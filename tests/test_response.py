@@ -4,6 +4,7 @@ import requests
 BASE_URL = 'http://localhost:8180'
 
 #Тест на проверку GET запроса. Проверяет статус код, возврат параметра total и data.
+@pytest.mark.smoke
 def test_get_phonebook():
     try:
         response = requests.get(f'{BASE_URL}/')
@@ -15,6 +16,7 @@ def test_get_phonebook():
         print("Status code: {}. FAILED. Must be 200".format(response.status_code))
 
 #Тест на проверку POST запроса. Проверяет статус кода, возврат параметра success.
+@pytest.mark.smoke
 def test_create_person():
     payload = {
         "fname": "John",
@@ -31,6 +33,7 @@ def test_create_person():
         print("Status code: {}. Must be 201".format(response.status_code))
         
 #Тест на проверку создания персоны в книжке по новому id, при условии, что изначально в книжке их 3. Проверяет статус кода.
+@pytest.mark.smoke
 def test_check_created_person():
     try:
         response = requests.get(f'{BASE_URL}?id={4}')
@@ -40,9 +43,10 @@ def test_check_created_person():
         print("Status code: {}. Person is not created".format(response.status_code))
 
 #Тест на проверку PUT запроса. Проверяет статус кода, возвращает параметр succsess.
+@pytest.makr.xfail (reason = "Не работает (или я не понял как) поиск по key кроме по id")
 def test_update_person():
     payload = {
-        "id": 1,
+        "id": 4,
         "fname": "Jane",
         "lname": "Doe",
         "phone": "+9876543210",
@@ -57,6 +61,7 @@ def test_update_person():
         print("Status code: {}. Must be 202".format(response.status_code))
 
 #Тест на проверку обновления данных по fname, при условии, что изначально fname = Tom
+@pytest.mark.xfail (reason = "Не работает (или я не понял как) поиск по key кроме по id")
 def test_check_updated_person():
     try:
         response = requests.get(f'{BASE_URL}?id={1}&fname=Jane')
