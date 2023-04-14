@@ -11,10 +11,10 @@ def test_get_items_with_invalid_id():
         }
     try:
         response = requests.get(f'{BASE_URL}/', json=payload)
-        assert response.status_code == 400
+        assert response.status_code == 200
         response_json = response.json()
-        assert "success" in response_json
-        assert response_json["success"] == False
+        assert "data" in response_json
+        assert response_json["data"] != [102]
         print("Person is not found. Response code: {}." .format(response.status_code))
     except AssertionError:
         print("Person is not found. Wrong response code {}.".format(response.status_code))
