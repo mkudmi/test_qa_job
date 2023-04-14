@@ -6,3 +6,4 @@ client/*
 !Dockerfile
 !.dockerignore
 php/
+tests/__pycache__/*

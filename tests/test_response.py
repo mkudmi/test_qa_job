@@ -29,3 +29,11 @@ def test_create_person():
         print("Status code: {}. SUCCESS".format(response.status_code))
     except AssertionError:
         print("Status code: {}. Must be 201".format(response.status_code))
+
+def test_check_created_person():
+    try:
+        response = requests.get(f'{BASE_URL}?id={4}')
+        assert response.status_code == 200
+        print("Status code: {}. Person is created".format(response.status_code))
+    except AssertionError:
+        print("Status code: {}. Person is not created".format(response.status_code))
