@@ -15,10 +15,11 @@ def test_get_phonebook():
     except AssertionError:
         print("Status code: {}. FAILED. Must be 200".format(response.status_code))
 
-#Тест на проверку POST запроса. Проверяет статус кода, возврат параметра success.
+#Тест на проверку POST запроса. Проверяет статус кода, возврат параметра success. Создает тестовый id - 1001
 @pytest.mark.smoke
 def test_create_person():
     payload = {
+        "id": "1001",
         "fname": "John",
         "lname": "Doe",
         "phone": "+1234567890",
@@ -28,22 +29,15 @@ def test_create_person():
         response = requests.post(f'{BASE_URL}/', json=payload)
         assert response.status_code == 201
         assert "success" in response.json()
+        response_json = response.json()
+        assert "total" in response_json
+        assert response_json["total"] == 7
         print("Status code: {}. SUCCESS".format(response.status_code))
     except AssertionError:
-        print("Status code: {}. Must be 201".format(response.status_code))
-        
-#Тест на проверку создания персоны в книжке по новому id, при условии, что изначально в книжке их 3. Проверяет статус кода.
-@pytest.mark.smoke
-def test_check_created_person():
-    try:
-        response = requests.get(f'{BASE_URL}?id={4}')
-        assert response.status_code == 200
-        print("Status code: {}. Person is created".format(response.status_code))
-    except AssertionError:
-        print("Status code: {}. Person is not created".format(response.status_code))
+        print("Status code: {}. Person is created. Wrong response code. Must be 201".format(response.status_code))
 
-#Тест на проверку PUT запроса. Проверяет статус кода, возвращает параметр succsess.
-@pytest.makr.xfail (reason = "Не работает (или я не понял как) поиск по key кроме по id")
+#Тест на проверку PUT запроса. Проверяет статус кода, возвращает параметр "succsess".
+@pytest.mark.xfail (reason = "Не работает (или я не понял как) поиск по key кроме по id")
 def test_update_person():
     payload = {
         "id": 4,
@@ -69,3 +63,15 @@ def test_check_updated_person():
         print("Status code: {}. Person is updated".format(response.status_code))
     except AssertionError:
         print("Status code: {}. Person is not updated".format(response.status_code))
+
+#Тест на проверку DELETE запроса. Проверяет статус кода, возвращает параметр "success" и "total", последний проверяет кол-во записей.
+def test_delete_person():
+    try:
+        response = requests.delete(f'{BASE_URL}', json={"id": 1001})
+        assert response.status_code == 202
+        response_json = response.json()
+        assert "total" in response_json
+        assert response_json["total"] == 6
+        print("Status code: {}. Person is deleted".format(response.status_code))
+    except AssertionError:
+        print("Status code: {}. Person is deleted. Wrong response code. Must be 202".format(response.status_code))
