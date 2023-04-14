@@ -41,7 +41,7 @@ def test_put_item_performance():
     assert response.elapsed.total_seconds() < 1.0
     print("Response time: {} seconds".format(response.elapsed.total_seconds()))
     
-#Тест на проверку скорости POST запроса. Выводит кол-во секунд
+#Тест на проверку скорости DELETE запроса. Выводит кол-во секунд
 @pytest.mark.performance
 def test_delete_item_performance():
     payload = {
