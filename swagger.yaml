@@ -1,0 +1,239 @@
+openapi: 3.0.0
+servers:
+  - url: https://localhost:8180
+    description: "Test server API"
+info:
+  version: "1.0.0"
+  title: Test job server
+  description: >-
+    DiliApi Test job server api flow
+paths:
+  /:
+    get:
+      summary: Get items from phonebook 
+      description: >-
+        Get items form phonbook. If `id` specified, return info related to `id`, else return number of entities according to `page` and `items` parameters. 
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          description: >-
+            Entity id
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 0
+          description: >-
+            Specify page number
+        - in: query
+          name: items
+          schema:
+            type: integer
+            default: 10
+          description: >-
+            Specify items per page
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+                schema:
+                  oneOf:
+                    - type: object
+                      properties:
+                        total:
+                          type: integer
+                          description: >-
+                            Total sum of entities
+                          example: 1
+                        data:
+                          type: array
+                          items: {
+                            $ref: '#/components/schemas/person'
+                          }
+                    - $ref: '#/components/schemas/person'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+    post:
+      summary: Create new entity 
+      description: >-
+        Create new person with given payloads
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fname:
+                  type: string
+                  example: Tom
+                  description: Person's first name
+                lname:
+                  type: string
+                  example: Hanks
+                  description: Person's last name
+                phone:
+                  type: string
+                  example: "+1234567890"
+                  minLength: 11
+                  maxLength: 11
+                  description: Person's phone number
+                bday:
+                  type: string
+                  example: "1956-07-09"
+                  description: Person's birth day date in format `YYYY-MM-DD`
+              required: 
+              - fname
+              - lname
+              - phone
+              - bday
+      responses:
+        201:
+          description: Created
+          $ref: '#/components/responses/default'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/ServerError'
+    put:
+      summary: Change entiy's data 
+      description: >-
+        Change persons's data
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/person'
+              required: 
+              - id
+      responses:
+        202:
+          description: Accepted
+          $ref: '#/components/responses/default'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+    delete:
+      summary: Delete entity
+      description: >-
+        Delete specified enetity from phonebook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+              required: 
+              - id
+      responses:
+        202:
+          description: Accepted
+          $ref: '#/components/responses/default'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+    head:
+      deprecated: true
+      responses:
+        405:
+          $ref: '#/components/responses/MethodNotAllowed'
+    options:
+      deprecated: true
+      responses:
+        405:
+          $ref: '#/components/responses/MethodNotAllowed'
+    trace:
+      deprecated: true
+      responses:
+        405:
+          $ref: '#/components/responses/MethodNotAllowed'
+components:
+  responses:
+    default:
+      description: default response body on success
+      content:
+        application/json:
+         schema:
+          $ref: '#components/schemas/defaultResponseBody'
+    Error:
+      description: default response body on error
+      content:
+        application/json:
+         schema:
+          $ref: '#/components/schemas/defaultErrorBody'
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+         schema:
+          $ref: '#/components/schemas/defaultErrorBody'
+    NotFound:
+      description: Entity Not Found
+      content:
+        application/json:
+         schema:
+          $ref: '#/components/schemas/defaultErrorBody'
+    MethodNotAllowed:
+      description: Method not Allowed
+      content:
+        application/json:
+         schema:
+          $ref: '#/components/schemas/defaultErrorBody'
+    ServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+         schema:
+          $ref: '#/components/schemas/defaultErrorBody'
+  schemas: 
+    person:
+      type: object
+      properties:
+        id: 
+          type: integer
+          example: 1
+        fname:
+          type: string
+          example: Tom
+          description: Person's first name
+        lname:
+          type: string
+          example: Hanks
+          description: Person's last name
+        phone:
+          type: string
+          minLength: 11
+          maxLength: 11
+          example: "+1234567890"
+          description: Person's phone number
+        bday:
+          type: string
+          example: "1956-07-09"
+          description: Person's birth day date
+    defaultResponseBody:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+    defaultErrorBody:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+          default: false

@@ -1,0 +1,8 @@
+db/*
+!db/.gitignore
+httpd/logs/*
+!httpd/logs/.gitignore
+client/*
+!Dockerfile
+!.dockerignore
+php/

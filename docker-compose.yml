@@ -1,0 +1,66 @@
+version: '3'
+
+services:
+
+  db:
+    build:
+      context: ./dbserver
+      dockerfile: ./Dockerfile
+    image: mysql:8.0.32
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: test
+      MYSQL_USER: tom
+      MYSQL_PASSWORD: g!veme5
+    volumes:
+      - ./db:/var/lib/mysql
+      - ./dbserver/mysql.conf.d:/etc/mysql/mysql.conf.d
+
+  front.test:
+    build:
+      context: ./webserver
+      dockerfile: ./Dockerfile
+      target: dev
+      args:
+        PHP_VERSION: 8.2.3
+        PHP_OPTIONS: --with-curl=/usr/lib --with-apxs2=/usr/bin/apxs --with-mysql=mysqlnd --with-pdo-mysql=mysqlnd --with-mysqli --with-zlib=shared --with-gd
+    image: httpd:8.2.3-dev
+    command: 
+      - |
+        httpd
+        php /tmp/migrate.php
+        tail -f /var/log/apache2/access.log /var/log/apache2/error.log
+    restart: unless-stopped
+    environment:
+      - MYSQL_SERVER=db
+      - MYSQL_USER=tom
+      - MYSQL_PASSWORD=g!veme5
+      - MYSQL_DATABASE=test
+    ports:
+      - 8180:80
+    volumes:
+      - ./httpd/htdocs:/htdocs
+      - ./httpd/logs:/htlogs
+      - ./httpd/cgi:/htcgi
+      - ./webserver/migrate:/tmp
+    networks:
+      default:
+        aliases:
+          - front.test
+    depends_on:
+      - db
+
+  client:
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile
+    image: foront-test-client:latest
+    entrypoint: npm install && node app.js
+    ports: 
+      - 3000:80
+    depends_on: 
+      - front.test
+    volumes:
+      - ./client:/app
