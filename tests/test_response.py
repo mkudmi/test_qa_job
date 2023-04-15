@@ -64,6 +64,7 @@ def test_check_updated_person():
         print("Status code: {}. Person is not updated".format(response.status_code))
 
 #Тест на проверку DELETE запроса. Проверяет статус кода, возвращает параметр "success" и "total", последний проверяет кол-во записей.
+@pytest.mark.smoke
 def test_delete_person():
     try:
         response = requests.delete(f'{BASE_URL}', json={"id": 1001})
