@@ -30,7 +30,7 @@ def test_create_person():
         assert response.status_code == 201
         response_json = response.json()
         assert "total" in response_json
-        assert response_json["total"] == 7
+        assert response_json["total"] == 8
         print("Status code: {}. SUCCESS".format(response.status_code))
     except AssertionError:
         print("Status code: {}. Person is created. Wrong response code. Must be 201".format(response.status_code))
@@ -70,7 +70,7 @@ def test_delete_person():
         assert response.status_code == 202
         response_json = response.json()
         assert "total" in response_json
-        assert response_json["total"] == 6
+        assert response_json["total"] == 7
         print("Status code: {}. Person is deleted".format(response.status_code))
     except AssertionError:
         print("Status code: {}. Person is deleted. Wrong response code. Must be 202".format(response.status_code))

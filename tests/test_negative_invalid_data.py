@@ -49,7 +49,7 @@ def test_update_person_with_invalid_lname():
     try:
         response = requests.put(f'{BASE_URL}/', json=payload)
         assert response.status_code == 400
-        print("Status code: {}. Person not updated".format(response.status_code))
+        print("Status code: {}. Person is not updated".format(response.status_code))
     except:
         print("Person UPDATED. Wrong response code".format(response.status_code))
 
